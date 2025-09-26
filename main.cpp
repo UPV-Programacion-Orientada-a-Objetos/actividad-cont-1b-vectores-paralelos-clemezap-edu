@@ -17,29 +17,16 @@ void llenadoProductosIniciales();
 void consultaProducto();
 void actualizarInventario();
 void generarReporte();
-void productoCaro();
+void productoBarato();
 
 int main() {
     
     // Se llama a la función para llenar el array de productos
     llenadoProductosIniciales();
 
-    // Impresión en Main
-    for (int i = 0; i < totalProductos; i++){
-        
-        std::cout << "Entró al ciclo, código: " << codigoProducto[i] << std::endl;
-        
-        std::cout << "Código " << codigoProducto[i] <<std::endl;
-        std::cout << "Nombre " << nombreProducto[i] <<std::endl;
-        std::cout << "Cantidad " << cantidadStock[i] <<std::endl;
-        std::cout << "Precio " << precioUnitario[i] <<std::endl;
-        std::cout << "Ubicacion " << ubicacion[i] <<std::endl;
-        std::cout << "---------------------------------------" << std::endl;
+    std::cout << "El ultimo es: " << codigoProducto[totalProductos-1] << std::endl; 
 
-    }
-
-
-    /*
+    
     int opcion = 0;
 
     std::cout << " - - - Bienvenido al Sistema de Inventario \"El Martillo\" - - -" << std::endl;
@@ -68,13 +55,13 @@ int main() {
             actualizarInventario();
             break;
         case 3:
-            generarReporte();
+            
             break;
         case 4:
-            productoCaro();
+            generarReporte();
             break;
         case 5:
-            std::cout << "Saliendo del programa . . ." << std::endl;
+            productoBarato();
             break;
         case 6:
             std::cout << "Guardando cambios . . ." << std::endl;
@@ -86,14 +73,13 @@ int main() {
             break;
         }
         
-    } while (opcion != 6); */
+    } while (opcion != 6);
 
 
     return 0;
 }
 
 // Función para llenar los datos de los 5 productos iniciales
-// ! ACTUALIZAR
 void llenadoProductosIniciales(){
 
     std::ifstream archivo("data/inventario.txt");
@@ -109,15 +95,13 @@ void llenadoProductosIniciales(){
         return;
     }
 
-    std::cout << "Se abrió el archivo" << std::endl;
+    std::cout << "Cargando inventario desde 'inventarios.txt'..." << std::endl;
 
     // Lee la primera línea (encabezados) y no la almacena;
     std::getline(archivo, linea);
 
     // Realiza un ciclo mientras lea las lineas (renglones) del txt
     while (std::getline(archivo, linea)){
-
-        std::cout << "Linea leída: " << linea << std::endl; 
 
         // Variables para analizar la línea
         std::stringstream ss(linea);
@@ -127,33 +111,27 @@ void llenadoProductosIniciales(){
         std::getline(ss, dato, ',');
         codigoProducto[totalProductos] = std::stoi(dato);
 
-        std::cout << "Caracter leído: " << dato << std::endl; 
-
         // Lógica para almacenar el nombre
         std::getline(ss, dato, ',');
         nombreProducto[totalProductos] = dato;
-        std::cout << "Caracter leído: " << dato << std::endl;
-        std::cout << "Caracter ingresado: " << nombreProducto[totalProductos] << std::endl;
 
         // Lógica para almacenar la cantidad
         std::getline(ss, dato, ',');
         cantidadStock[totalProductos] = std::stoi(dato);
-        std::cout << "Caracter leído: " << dato << std::endl; 
 
         // Lógica para almacenar el precio
         std::getline(ss, dato, ',');
         precioUnitario[totalProductos] = std::stof(dato);
-        std::cout << "Caracter leído: " << dato << std::endl; 
 
         // Lógica para almacenar la ubicación
         std::getline(ss, dato, '\n');
         ubicacion[totalProductos] = dato;
-        std::cout << "Caracter leído: " << dato << std::endl;
-        std::cout << "Caracter ingresado: " << ubicacion[totalProductos] << std::endl;
 
         totalProductos++;
 
     }
+
+    std::cout << "Inventario cargado exitosamente. " << totalProductos << "productos encontrados." <<std::endl;
 
 }
 
@@ -166,15 +144,14 @@ void consultaProducto(){
     std::cout << "Ingresa el código del producto a consultar: " << std::endl;
     std::cin >> codigoConsulta;
 
-    for (int i = 0; i < 100; i ++){
+    for (int i = 0; i < totalProductos; i ++){
 
-        // Se hace una búsqueda en los campos que no están vacíos y devuelve los resultados
-        if (codigoProducto[i] != 0 && codigoProducto[i] == codigoConsulta){
-            std::cout << "Información del Producto: " << std::endl;
-            std::cout << "Código: " << codigoProducto[i] <<std::endl;
-            std::cout << "Nombre: " << nombreProducto[i] << std::endl;
-            std::cout << "Cantidad en stock: " << cantidadStock[i] << std::endl;
-            std::cout << "Precio unitario: $" << precioUnitario[i] << std::endl;
+        // Se hace una búsqueda y devuelve los resultados
+        if (codigoProducto[i] == codigoConsulta){
+            std::cout << "Código | Nombre                     | Cantidad en Stock  | Precio   |  Ubicación " << std::endl;
+            std::cout << "------------------------------------------------------------------------------------" << std::endl;
+            std::cout << codigoProducto[i] << " | " << nombreProducto[i] << " | " << cantidadStock[i] << " | " << precioUnitario[i] << " | " << ubicacion[i] <<std::endl;
+            std::cout << "------------------------------------------------------------------------------------" << std::endl;
             existe = true;
             break;
         }
@@ -188,30 +165,29 @@ void consultaProducto(){
 }
 
 // Función para actualizara inventario
-// ! ACTUALIZAR
 void actualizarInventario(){
 
-    int codigoConsulta = 0;
+    std::string ubicacionConsulta;
     int indice = 0;
     bool existe = false;
     bool paso = false;
     int cantidadActualizar = 0;
 
-    std::cout << "Ingresa el código del producto a consultar: " << std::endl;
-    std::cin >> codigoConsulta;
+    std::cout << "Ingresa la ubicación del producto a consultar: " << std::endl;
+    std::cin >> ubicacionConsulta;
 
-    for (int i = 0; i < 100; i++){
-        // Se hace la búsqueda del producto en los campos NO vacíos y activa la bandera si exsite
-        if (codigoProducto[i] != 0 && codigoProducto[i] == codigoConsulta){
+    for (int i = 0; i < totalProductos; i++){
+        // Se hace la búsqueda del producto mediante la ubicación y activa la bandera si exsite
+        if (ubicacion[i] == ubicacionConsulta){
             indice = i;
             existe = true;
             break;
         }
-
     }
-    // Si la bandear esta desactivada lo imprime y no continúa la lógica de actualización
+
+    // Si la bandera esta desactivada lo imprime y no continúa la lógica de actualización
     if (!existe){
-        std::cout << "No se encontró ningún producto con ese código" << std::endl;
+        std::cout << "No se encontró ningún producto con esta ubicación" << std::endl;
     } else {
         // Si entra a esta sección, se valida que se ingrese una cantidad que no de menor a 0 mediante un do-while
         do{
@@ -242,14 +218,10 @@ void generarReporte(){
     std::cout << "Código   | Nombre               | Stock | Precio     " << std::endl;
     std::cout << "-----------------------------------------------------" << std::endl;
 
-    for (int i = 0; i < 100; i ++){
+    for (int i = 0; i < totalProductos; i ++){
         // Se buscan e imprimen las casillos no vacías de los arrays
-        if (codigoProducto[i] !=  0){
+        if (cantidadStock[i] <=  10){
             std::cout << codigoProducto[i] << "      | " << nombreProducto[i] << " | " << cantidadStock[i] << "   | $" << precioUnitario[i] << std::endl;
-        }
-
-        if (codigoProducto[i] == 0){
-            break;
         }
     }
     std::cout << "-----------------------------------------------------" << std::endl;
@@ -257,19 +229,19 @@ void generarReporte(){
 }
 
 // Función para buscar el producto más caro
-void productoCaro(){
+void productoBarato(){
     
     int indiceProducto = 0;
-    float precioMayor = 0;
+    float precioMenor = precioUnitario[0];
 
-    for (int i = 0; i < 100; i++ ){
-        // Se almacena en la variable precioMayor los valores que sean mayores al anterior, hasta llegar al último.
-        if (codigoProducto[i] != 0 && precioUnitario[i] > precioMayor){
-            precioMayor = precioUnitario[i];
+    for (int i = 0; i < totalProductos; i++ ){
+        // Se almacena en la variable precioMenor los valores que sean menores al anterior, hasta llegar al último.
+        if (precioUnitario[i] < precioMenor){
+            precioMenor = precioUnitario[i];
             indiceProducto = i;
         }
     }
 
-    std::cout << "El producto más caro es: " << nombreProducto[indiceProducto] << " con un precio de $" << precioUnitario[indiceProducto] << std::endl;
+    std::cout << "El producto más barato es: " << nombreProducto[indiceProducto] << " con un precio de $" << precioUnitario[indiceProducto] << std::endl;
 
 }
