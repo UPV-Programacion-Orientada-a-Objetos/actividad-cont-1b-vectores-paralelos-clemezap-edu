@@ -112,6 +112,10 @@ void llenadoProductosIniciales(){
         std::getline(ss, dato, ',');
         codigoProducto[totalProductos] = std::stoi(dato);
 
+        // Lógica para almacenar la ubicación
+        std::getline(ss, dato, ',');
+        ubicacion[totalProductos] = dato;
+
         // Lógica para almacenar el nombre
         std::getline(ss, dato, ',');
         nombreProducto[totalProductos] = dato;
@@ -121,18 +125,26 @@ void llenadoProductosIniciales(){
         cantidadStock[totalProductos] = std::stoi(dato);
 
         // Lógica para almacenar el precio
-        std::getline(ss, dato, ',');
-        precioUnitario[totalProductos] = std::stof(dato);
-
-        // Lógica para almacenar la ubicación
         std::getline(ss, dato, '\n');
-        ubicacion[totalProductos] = dato;
+        precioUnitario[totalProductos] = std::stof(dato);
 
         totalProductos++;
 
     }
 
     std::cout << "Inventario cargado exitosamente. " << totalProductos << " productos encontrados." <<std::endl;
+
+    std::cout << " - - - Reporte de Sobre Stock - - - " << std::endl;
+    
+    std::cout << "Código   | Ubicación |  Nombre               | Stock | Precio     " << std::endl;
+    std::cout << "-----------------------------------------------------" << std::endl;
+
+    for (int i = 0; i < totalProductos; i ++){
+        if (cantidadStock[i] >=  50){
+            std::cout << codigoProducto[i] << "       | " << ubicacion[i] << "     | " << nombreProducto[i] << " | " << cantidadStock[i] << "   | $" << precioUnitario[i] << std::endl;
+        }
+    }
+    std::cout << "-----------------------------------------------------" << std::endl;
 
 }
 
@@ -273,7 +285,7 @@ void generarReporte(){
 
     for (int i = 0; i < totalProductos; i ++){
         // Se buscan e imprimen las casillos no vacías de los arrays
-        if (cantidadStock[i] <=  10){
+        if (cantidadStock[i] <=  5){
             std::cout << codigoProducto[i] << "      | " << nombreProducto[i] << " | " << cantidadStock[i] << "   | $" << precioUnitario[i] << std::endl;
         }
     }
@@ -310,10 +322,10 @@ void guardarEnArchivo(){
         return;
     }
 
-    archivo << "Código,Nombre,Cantidad,Precio,Ubicación" << std::endl;
+    archivo << "Código,Ubicacion,Nombre,Cantidad,Precio" << std::endl;
 
     for (int i = 0; i < totalProductos; i++){
-        archivo << codigoProducto[i] << "," << nombreProducto[i] << "," << cantidadStock[i] << "," << precioUnitario[i] << "," << ubicacion[i] << std::endl;
+        archivo << codigoProducto[i] << "," << ubicacion[i] << ","<< nombreProducto[i] << "," << cantidadStock[i] << "," << precioUnitario[i]<< std::endl;
     }
 
     archivo.close();
