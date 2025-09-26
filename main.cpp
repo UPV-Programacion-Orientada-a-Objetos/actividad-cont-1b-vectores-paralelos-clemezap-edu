@@ -16,6 +16,7 @@ int totalProductos = 0;
 void llenadoProductosIniciales();
 void consultaProducto();
 void actualizarInventario();
+void registrarProducto();
 void generarReporte();
 void productoBarato();
 
@@ -42,9 +43,14 @@ int main() {
         std::cout << " 4. Generar reporte de bajo stock " << std::endl;
         std::cout << " 5. Encontrar el producto más barato " << std::endl;
         std::cout << " 6. Guardar y salir " << std::endl;
-        
-        std::cin >> opcion;
 
+        // Validar que ingresó un número
+        while (!(std::cin >> opcion)){
+            std::cout << "Ingrese un número, por favor" << std::endl;
+            std::cin.clear();
+            std::cin.ignore(10000, '\n');
+        }
+        
         std::cout << "Opción seleccionada: " << opcion << std::endl;
 
         switch (opcion){
@@ -55,7 +61,7 @@ int main() {
             actualizarInventario();
             break;
         case 3:
-            
+            registrarProducto();
             break;
         case 4:
             generarReporte();
@@ -207,6 +213,63 @@ void actualizarInventario(){
 
         } while (!paso);
     }
+
+}
+
+// Función para registrar un nuevo producto
+void registrarProducto(){
+
+    int codigo = 0;
+    int cantidad = 0;
+    float precio = 0;
+
+    // Almacenar el código después de validar que sea entero
+    std::cout << "- - - - - - - - - - " << std::endl;
+    std::cout << "Código: " << std::endl;
+    while (!(std::cin >> codigo)){
+        std::cout << "Ingrese un número, por favor" << std::endl;
+        std::cin.clear();
+        std::cin.ignore(10000, '\n');
+    }
+    codigoProducto[totalProductos] = codigo;
+    std::cout << "- - - - - - - - - - " << std::endl;
+
+    // Almacenar el nombre
+    std::cout << "- - - - - - - - - - " << std::endl;
+    std::cout << "Nombre: " << std::endl;
+    std::cin >> nombreProducto[totalProductos];
+    std::cout << "- - - - - - - - - - " << std::endl;
+    
+    // Almacenar cantidad después de validar que sea entero y mayor a 0
+    std::cout << "- - - - - - - - - - " << std::endl;
+    std::cout << "Cantidad: " << std::endl;
+    while (!(std::cin >> cantidad) || cantidad < 0){
+        std::cout << "Ingrese un número válido, por favor" << std::endl;
+        std::cin.clear();
+        std::cin.ignore(10000, '\n');
+    }
+
+    cantidadStock[totalProductos] = cantidad;
+    std::cout << "- - - - - - - - - - " << std::endl;
+
+    // Almacenar precio despúes de validar
+    std::cout << "- - - - - - - - - - " << std::endl;
+    std::cout << "Precio: " << std::endl;
+    while (!(std::cin >> precio)){
+        std::cout << "Ingrese un número, por favor" << std::endl;
+        std::cin.clear();
+        std::cin.ignore(10000, '\n');
+    }
+    precioUnitario[totalProductos] = precio;
+    std::cout << "- - - - - - - - - - " << std::endl;
+
+    // Almacenar la ubicación
+    std::cout << "- - - - - - - - - - " << std::endl;
+    std::cout << "Ubicación: " << std::endl;
+    std::cin >> ubicacion[totalProductos];
+    std::cout << "- - - - - - - - - - " << std::endl;
+
+    totalProductos++;
 
 }
 
