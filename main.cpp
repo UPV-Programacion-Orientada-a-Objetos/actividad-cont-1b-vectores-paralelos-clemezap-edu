@@ -19,14 +19,12 @@ void actualizarInventario();
 void registrarProducto();
 void generarReporte();
 void productoBarato();
+void guardarEnArchivo();
 
 int main() {
     
     // Se llama a la función para llenar el array de productos
     llenadoProductosIniciales();
-
-    std::cout << "El ultimo es: " << codigoProducto[totalProductos-1] << std::endl; 
-
     
     int opcion = 0;
 
@@ -71,7 +69,7 @@ int main() {
             break;
         case 6:
             std::cout << "Guardando cambios . . ." << std::endl;
-            // Lógica para guardar
+            guardarEnArchivo();
             std::cout << "Saliendo . . ." << std::endl;
             break;
         default:
@@ -91,13 +89,10 @@ void llenadoProductosIniciales(){
     std::ifstream archivo("data/inventario.txt");
     std::string linea;
 
-    // Si no existe el archivo crea uno y se le da formato al header
+    // Si no existe le notifica al usuario
     if (!archivo.is_open()){
         std::cout << "No se encontró el archivo de inventario" << std::endl;
-        std::cout << "Creando un archivo nuevo . . ." << std::endl;
-        std::ofstream nuevoArchivo("data/inventario.txt");
-        nuevoArchivo << "Código,Nombre,Cantidad,Precio,Ubicación" << std::endl;
-        nuevoArchivo.close();
+        std::cout << "No se cargaron productos. Registra productos y se almacenarán en un archivo que se creará" << std::endl;
         return;
     }
 
@@ -137,7 +132,7 @@ void llenadoProductosIniciales(){
 
     }
 
-    std::cout << "Inventario cargado exitosamente. " << totalProductos << "productos encontrados." <<std::endl;
+    std::cout << "Inventario cargado exitosamente. " << totalProductos << " productos encontrados." <<std::endl;
 
 }
 
@@ -232,13 +227,11 @@ void registrarProducto(){
         std::cin.ignore(10000, '\n');
     }
     codigoProducto[totalProductos] = codigo;
-    std::cout << "- - - - - - - - - - " << std::endl;
 
     // Almacenar el nombre
     std::cout << "- - - - - - - - - - " << std::endl;
     std::cout << "Nombre: " << std::endl;
     std::cin >> nombreProducto[totalProductos];
-    std::cout << "- - - - - - - - - - " << std::endl;
     
     // Almacenar cantidad después de validar que sea entero y mayor a 0
     std::cout << "- - - - - - - - - - " << std::endl;
@@ -250,7 +243,6 @@ void registrarProducto(){
     }
 
     cantidadStock[totalProductos] = cantidad;
-    std::cout << "- - - - - - - - - - " << std::endl;
 
     // Almacenar precio despúes de validar
     std::cout << "- - - - - - - - - - " << std::endl;
@@ -261,13 +253,11 @@ void registrarProducto(){
         std::cin.ignore(10000, '\n');
     }
     precioUnitario[totalProductos] = precio;
-    std::cout << "- - - - - - - - - - " << std::endl;
 
     // Almacenar la ubicación
     std::cout << "- - - - - - - - - - " << std::endl;
     std::cout << "Ubicación: " << std::endl;
     std::cin >> ubicacion[totalProductos];
-    std::cout << "- - - - - - - - - - " << std::endl;
 
     totalProductos++;
 
@@ -306,5 +296,27 @@ void productoBarato(){
     }
 
     std::cout << "El producto más barato es: " << nombreProducto[indiceProducto] << " con un precio de $" << precioUnitario[indiceProducto] << std::endl;
+
+}
+
+// Función para guardar en archivo
+void guardarEnArchivo(){
+
+    // Abre el archivo en modo escritura, o lo crea si no existe
+    std::ofstream archivo("data/inventario.txt");
+
+    if (!archivo.is_open()){
+        std::cout << "No se pudo abrir el archivo" << std::endl;
+        return;
+    }
+
+    archivo << "Código,Nombre,Cantidad,Precio,Ubicación" << std::endl;
+
+    for (int i = 0; i < totalProductos; i++){
+        archivo << codigoProducto[i] << "," << nombreProducto[i] << "," << cantidadStock[i] << "," << precioUnitario[i] << "," << ubicacion[i] << std::endl;
+    }
+
+    archivo.close();
+    std::cout << "Inventario guardado en archivo" << std::endl;
 
 }
